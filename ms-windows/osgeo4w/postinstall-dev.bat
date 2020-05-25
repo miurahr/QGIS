@@ -12,8 +12,8 @@ if not %OSGEO4W_DESKTOP_LINKS%==0 mkdir "%OSGEO4W_DESKTOP%"
 
 call "%OSGEO4W_ROOT%\bin\@package@.bat" --postinstall
 
-if not %OSGEO4W_MENU_LINKS%==0 nircmd shortcut "%OSGEO4W_ROOT%\bin\@package@-bin.exe" "%OSGEO4W_STARTMENU%" "QGIS Desktop @version@" "" "" "" "" "~$folder.mydocuments$"
-if not %OSGEO4W_DESKTOP_LINKS%==0 nircmd shortcut "%OSGEO4W_ROOT%\bin\@package@-bin.exe" "%OSGEO4W_DESKTOP%" "QGIS Desktop @version@" "" "" "" "" "~$folder.mydocuments$"
+if not %OSGEO4W_MENU_LINKS%==0 PowerShell -NoProfile -ExecutionPolicy Bypass -Command 'set-shortcut "%OSGEO4W_ROOT%\bin\@package@-bin.exe" "%OSGEO4W_STARTMENU%" "QGIS Desktop @version@" "" "" "" "" "~$folder.mydocuments$"'
+if not %OSGEO4W_DESKTOP_LINKS%==0  PowerShell -NoProfile -ExecutionPolicy Bypass -Command 'set-shortcut "%OSGEO4W_ROOT%\bin\@package@-bin.exe" "%OSGEO4W_DESKTOP%" "QGIS Desktop @version@" "" "" "" "" "~$folder.mydocuments$"'
 
 for %%g in (@grassversions@) do (
 	set gv=
@@ -26,13 +26,13 @@ for %%g in (@grassversions@) do (
 		textreplace -std -map @grassmajor@ !v! -t bin\@package@-g!v!.bat
 		call "%OSGEO4W_ROOT%\bin\@package@-g!v!.bat" --postinstall
 
-		if not %OSGEO4W_MENU_LINKS%==0 nircmd shortcut "%OSGEO4W_ROOT%\bin\@package@-bin-g!v!.exe" "%OSGEO4W_STARTMENU%" "QGIS Desktop @version@ with GRASS !gv! (Nightly)" "" "" "" "" "~$folder.mydocuments$"
-		if not %OSGEO4W_DESKTOP_LINKS%==0 nircmd shortcut "%OSGEO4W_ROOT%\bin\@package@-bin-g!v!.exe" "%OSGEO4W_DESKTOP%" "QGIS Desktop @version@ with GRASS !gv! (Nightly)" "" "" "" "" "~$folder.mydocuments$"
+		if not %OSGEO4W_MENU_LINKS%==0 PowerShell -NoProfile -ExecutionPolicy Bypass -Command 'set-shortcut "%OSGEO4W_ROOT%\bin\@package@-bin-g!v!.exe" "%OSGEO4W_STARTMENU%" "QGIS Desktop @version@ with GRASS !gv! (Nightly)" "" "" "" "" "~$folder.mydocuments$"'
+		if not %OSGEO4W_DESKTOP_LINKS%==0 PowerShell -NoProfile -ExecutionPolicy Bypass -Command 'set-shortcut "%OSGEO4W_ROOT%\bin\@package@-bin-g!v!.exe" "%OSGEO4W_DESKTOP%" "QGIS Desktop @version@ with GRASS !gv! (Nightly)" "" "" "" "" "~$folder.mydocuments$"'
 	)
 )
 
-if not %OSGEO4W_MENU_LINKS%==0 nircmd shortcut "%OSGEO4W_ROOT%\bin\nircmd.exe" "%OSGEO4W_STARTMENU%" "Qt Designer with QGIS @version@ custom widgets (Nightly)" "exec hide """%OSGEO4W_ROOT%\bin\@package@-designer.bat"" "%OSGEO4W_ROOT%\apps\@package@\icons\QGIS.ico" "" "" "~$folder.mydocuments$"
-if not %OSGEO4W_DESKTOP_LINKS%==0 nircmd shortcut "%OSGEO4W_ROOT%\bin\nircmd.exe" "%OSGEO4W_DESKTOP%" "Qt Designer with QGIS @version@ custom widgets (Nightly)" "exec hide """%OSGEO4W_ROOT%\bin\@package@-designer.bat"" "%OSGEO4W_ROOT%\apps\@package@\icons\QGIS.ico" "" "" "~$folder.mydocuments$"
+if not %OSGEO4W_MENU_LINKS%==0 PowerShell -NoProfile -ExecutionPolicy Bypass -Command 'set-shortcut "PowerShell" "%OSGEO4W_STARTMENU%" "Qt Designer with QGIS @version@ custom widgets (Nightly)" "-WindowStyle hidden {""%OSGEO4W_ROOT%\bin\@package@-designer.bat""}" "%OSGEO4W_ROOT%\apps\@package@\icons\QGIS.ico" "" "" "~$folder.mydocuments$"'
+if not %OSGEO4W_DESKTOP_LINKS%==0 PowerShell -NoProfile -ExecutionPolicy Bypass -Command 'set-hortcut "PowerShell" "%OSGEO4W_DESKTOP%" "Qt Designer with QGIS @version@ custom widgets (Nightly)" "-windowstyle hidden {""%OSGEO4W_ROOT%\bin\@package@-designer.bat""}" "%OSGEO4W_ROOT%\apps\@package@\icons\QGIS.ico" "" "" "~$folder.mydocuments$"'
 
 set O4W_ROOT=%OSGEO4W_ROOT%
 set OSGEO4W_ROOT=%OSGEO4W_ROOT:\=\\%
@@ -40,7 +40,7 @@ textreplace -std -t "%O4W_ROOT%\apps\@package@\bin\qgis.reg"
 set OSGEO4W_ROOT=%O4W_ROOT%
 
 REM Do not register extensions if release is installed
-if not exist "%O4W_ROOT%\apps\qgis\bin\qgis.reg" nircmd elevate "%WINDIR%\regedit" /s "%O4W_ROOT%\apps\@package@\bin\qgis.reg"
+if not exist "%O4W_ROOT%\apps\qgis\bin\qgis.reg"  PowerShell -NoProfile -ExecutionPolicy Bypass -Command 'runasadmin "%WINDIR%\regedit" /s "%O4W_ROOT%\apps\@package@\bin\qgis.reg"'
 
 call "%OSGEO4W_ROOT%\bin\o4w_env.bat"
 call qt5_env.bat
