@@ -154,6 +154,9 @@ jobs:
   - script: c:\cygwin\bin\unzip -o c:\ninja.zip -d %OSGEO4W_ROOT%\bin
     displayName: 'Extracting Ninja'
 
+  - script: cinst -y windbg
+    displayName: 'Install WinDbg for Visual Studio 2017 and later'
+
 #  - script: c:\cygwin\bin\unzip -o c:\depends.zip -d %OSGEO4W_ROOT%\bin
 #    displayName: 'Extracting Dependency Walker'
 
@@ -181,11 +184,20 @@ jobs:
       echo on
       PATH c:\cygwin\bin;%OSGEO4W_ROOT%\bin;%PATH%
       cd ms-windows\osgeo4w
-      touch skippackage
       set OSGEO4W_CXXFLAGS=/MD /MP /Od /D NDEBUG
       @echo ##[section]%OSGEO4W_ARCH% results available at %DASHURL%
       package-nightly.cmd %VERSION% %BINARY% %OSGEO4W_PKG% %OSGEO4W_ARCH% %BUILD_SOURCEVERSION:~0,10% azure-pipelines
     displayName: 'Building QGIS'
+
+  - script: |
+      echo on
+      xcopy %OSGEO4W_ARCH%\release\qgis\%OSGEO4W_PKG% %BUILD_ARTIFACTSTAGINGDIRECTORY% /S /C /L /Y
+    displayName: 'Copy built package to artifact staging directory'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathToPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: osgeo4w-package
 
 #  - script: |
 #      echo on
