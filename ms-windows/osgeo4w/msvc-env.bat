@@ -21,6 +21,11 @@ if "%PF86%"=="" (echo PROGRAMFILES not set & goto error)
 if "%VCSDK%"=="" set VCSDK=10.0.14393.0
 
 set ARCH=%1
+set SITE=%2
+
+if "%SITE%"=="azure-pipelines" goto azurepipeline
+
+set VCVARSALLBAT=%PF86%\Microsoft Visual Studio 14.0\VC\vcvarsall.bat
 if "%ARCH%"=="x86" goto x86
 if "%ARCH%"=="x86_64" goto x86_64
 goto usage
@@ -37,6 +42,27 @@ set VCARCH=amd64
 set CMAKE_COMPILER_PATH=%PF86%\Microsoft Visual Studio 14.0\VC\bin\amd64
 set DBGHLP_PATH=%PF86%\Microsoft Visual Studio 14.0\Common7\IDE\Remote Debugger\x64
 set SETUPAPI_LIBRARY=%PF86%\Windows Kits\10\Lib\%VCSDK%\um\x64\SetupAPI.Lib
+goto archset
+
+:azurepipeline
+set VCVARSALLBAT=%PF86%\Microsoft Visual Studio 14.0\VC\vcvarsall.bat
+if "%ARCH%"=="x86" goto x86_2017
+if "%ARCH%"=="x86_64" goto x86_64_2017
+goto usage
+
+:x86_2017
+set VCARCH=x86
+set CMAKE_COMPILER_PATH=%PF86%\Microsoft Visual Studio 14.0\VC\bin
+set DBGHLP_PATH=%PF86%\Windows Kits\10\Debuggers\x86
+set SETUPAPI_LIBRARY=%PF86%\Windows Kits\10\Lib\%VCSDK%\um\x86\SetupAPI.Lib
+goto archset
+
+:x86_64_2017
+set VCARCH=amd64
+set CMAKE_COMPILER_PATH=%PF86%\Microsoft Visual Studio 14.0\VC\bin\amd64
+set DBGHLP_PATH=%PF86%\Windows Kits\10\Debuggers\x64
+set SETUPAPI_LIBRARY=%PF86%\Windows Kits\10\Lib\%VCSDK%\um\x64\SetupAPI.Lib
+goto archset
 
 :archset
 if not exist "%SETUPAPI_LIBRARY%" (echo SETUPAPI_LIBRARY not found & goto error)
@@ -57,7 +83,7 @@ call "%OSGEO4W_ROOT%\bin\py3_env.bat"
 call "%OSGEO4W_ROOT%\bin\qt5_env.bat"
 
 set VS140COMNTOOLS=%PF86%\Microsoft Visual Studio 14.0\Common7\Tools\
-call "%PF86%\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %VCARCH%
+call "%VCVARSALLBAT%" %VCARCH%
 
 path %path%;%PF86%\Microsoft Visual Studio 14.0\VC\bin
 
